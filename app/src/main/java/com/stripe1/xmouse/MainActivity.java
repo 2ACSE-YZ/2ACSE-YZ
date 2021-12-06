@@ -12,7 +12,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -27,8 +26,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -63,10 +62,15 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 	public static DatabaseHandler db;
 	public static MyConnectionHandler conn;
-	LinearLayout mouseLayout;
+
+	private int pointing_device=-1;
+	private int gyro_function=-1;
+
+//	boolean s=true;
+
+	LinearLayout canvasLayout;
 	LinearLayout keyboardLayout;
 
-	LinearLayout jsLayout;
 
 	public static ArrayList<ArrayList<String>> hostDBKeys;
 	public static String setting_host="";
@@ -74,16 +78,25 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	public static int setting_port=22;
 	public static String setting_pass="";
 	public static String setting_shell = "";
-	public static float setting_sensitivity=1.5f;
-	public static int setting_delay=350;
-	public static int setting_mdelay=0;
 
+	public static int setting_pointing_device=1;
+	public static int setting_gyro_function = 1;
+
+	public static float setting_mouse_sensitivity =1.5f;
+	public static int setting_mouse_delay =350;
+	public static int setting_mouse_mdelay =0;
+
+	public static float setting_hscroll_sensitivity=1.0f;
+	public static float setting_vscroll_sensitivity=1.0f;
 
 
 	public static float setting_gyro_z_sensitivity=1.5f;
 	public static float setting_gyro_y_sensitivity=1.5f;
+	public static float setting_gyro_x_sensitivity=1.5f;
 	public static float setting_gyro_z_threshold=1.5f;
 	public static float setting_gyro_y_threshold=1.5f;
+	public static float setting_gyro_x_threshold=1.5f;
+
 
 	public static float setting_js_sensitivity=1.0f;
 	public static float setting_js_size=0.5f;
@@ -116,14 +129,21 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	private int potentialDeletePosition;
 	private int startPosition;
 	//static ListView scriptList;
-	private FloatingActionButton fab;
-	public static TextView recentCmdTextView;
+	///\\\private FloatingActionButton fab;
+	private Button bTab, bSTab, bEnter;
+	private Button bMouse1, bMouse2, bMouse3, bMouse4, bMouse5, bMouse6, bMouse7;
+	private boolean bMouse1down=false, bMouse2down=false, bMouse3down=false, bMouse4down=false, bMouse5down=false, bMouse6down=false, bMouse7down=false;
+	private ToggleButton toggleButton;
+	private static TextView recentCmdTextView;
 
 
 	private Sensor gyroscope;
+	
+	float regyroscopeX=0;
+	float regyroscopeY=0;
+	float regyroscopeZ=0;
 
-	private Button jsSwitch;
-	private Button js_jsSwitch;
+	///\\\private Button jsSwitch;
 
 
 	//private ArrayList<ArrayList<String>> scriptItems = new ArrayList<ArrayList<String>>();
@@ -152,36 +172,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 
 	}
-	public void xMouseClickMouse(View v){
 
-		String cmd ="";
-
-		switch(v.getId()){
-			case R.id.firstMouseButton:
-			case R.id.js_firstMouseButton:
-				cmd ="xdotool click 1";
-				break;
-			case R.id.secondMouseButton:
-			case R.id.js_secondMouseButton:
-				cmd ="xdotool click 2";
-				break;
-			case R.id.thirdMouseButton:
-			case R.id.js_thirdMouseButton:
-				cmd ="xdotool click 3";
-				break;
-			case R.id.fourthMouseButton:
-			case R.id.js_fourthMouseButton:
-				cmd ="xdotool click 4";
-				break;
-			case R.id.fifthMouseButton:
-			case R.id.js_fifthMouseButton:
-				cmd ="xdotool click 5";
-				break;
-			default:
-				break;
-		}
-		conn.executeShellCommand(cmd);
-	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -209,14 +200,20 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 
 
-		fab = (FloatingActionButton) findViewById(R.id.fab);
+		/*/fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				if(keyboardLayout.getVisibility() == View.VISIBLE){
-					mouseLayout.setVisibility(View.VISIBLE);
+					if (s) {
+						mouseLayout.setVisibility(View.VISIBLE);
+						jsLayout.setVisibility(View.INVISIBLE);
+					}
+					else {
+						mouseLayout.setVisibility(View.INVISIBLE);
+						jsLayout.setVisibility(View.VISIBLE);
+					}
 					keyboardLayout.setVisibility(View.INVISIBLE);
-					jsLayout.setVisibility(View.INVISIBLE);
 					//Log.d("MainActivity", "Show Mouse");
 					fab.setImageResource(R.drawable.ic_action_hardware_keyboard);
 				}else {
@@ -236,16 +233,18 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 			}
 		});
 
-		/*fab.setOnLongClickListener(new View.OnLongClickListener() {
+		fab.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-				if(jsLayout.getVisibility() == View.INVISIBLE){
+				if(s){
+					s=false;
 					mouseLayout.setVisibility(View.INVISIBLE);
 					keyboardLayout.setVisibility(View.INVISIBLE);
 					jsLayout.setVisibility(View.VISIBLE);
 					//Log.d("MainActivity", "Show Mouse");
 					fab.setImageResource(R.drawable.ic_action_hardware_keyboard);
 				}else {
+					s=true;
 					keyboardLayout.setVisibility(View.INVISIBLE);
 					mouseLayout.setVisibility(View.VISIBLE);
 					jsLayout.setVisibility(View.INVISIBLE);
@@ -261,7 +260,244 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 				return true;
 			}
-		});*/
+		});/*/
+
+		bTab=findViewById(R.id.button_tab);
+
+		bTab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Tab";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		bSTab=findViewById(R.id.button_stab);
+
+		bSTab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Shift_L+Tab";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		bEnter=findViewById(R.id.button_menu);
+
+		bEnter.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Return";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+
+
+
+		bMouse1=findViewById(R.id.firstMouseButton);
+
+		bMouse1.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse1down) {
+							cmd="xdotool mousedown 1";
+						}
+						bMouse1down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse1down) {
+							cmd="xdotool mouseup 1";
+						}
+						bMouse1down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+
+		bMouse2=findViewById(R.id.secondMouseButton);
+
+		bMouse2.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse2down) {
+							cmd="xdotool mousedown 2";
+						}
+						bMouse2down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse2down) {
+							cmd="xdotool mouseup 2";
+						}
+						bMouse2down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		bMouse3=findViewById(R.id.thirdMouseButton);
+
+		bMouse3.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse3down) {
+							cmd="xdotool mousedown 3";
+						}
+						bMouse3down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse3down) {
+							cmd="xdotool mouseup 3";
+						}
+						bMouse3down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+		bMouse4=findViewById(R.id.fourthMouseButton);
+		
+		bMouse4.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse4down) {
+							cmd="xdotool mousedown 4";
+						}
+						bMouse4down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse4down) {
+							cmd="xdotool mouseup 4";
+						}
+						bMouse4down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+		bMouse5=findViewById(R.id.fifthMouseButton);
+ 
+		bMouse5.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse5down) {
+							cmd="xdotool mousedown 5";
+						}
+						bMouse5down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse5down) {
+							cmd="xdotool mouseup 5";
+						}
+						bMouse5down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+		bMouse6=findViewById(R.id.sixthMouseButton);
+
+		bMouse6.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse6down) {
+							cmd="xdotool mousedown 6";
+						}
+						bMouse6down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse6down) {
+							cmd="xdotool mouseup 6";
+						}
+						bMouse6down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		bMouse7=findViewById(R.id.seventhMouseButton);
+
+		bMouse7.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!bMouse7down) {
+							cmd="xdotool mousedown 7";
+						}
+						bMouse7down=true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (bMouse7down) {
+							cmd="xdotool mouseup 7";
+						}
+						bMouse7down=false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+		
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -269,38 +505,34 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 		drawer.setDrawerListener(toggle);
 		toggle.syncState();
 
-		mouseLayout = (LinearLayout) findViewById(R.id.mouse);
-		keyboardLayout = (LinearLayout) findViewById(R.id.keyboard);
+		///\\\mouseLayout = (LinearLayout) findViewById(R.id.mouse);
+		keyboardLayout = findViewById(R.id.keyboard);
 
-		jsLayout = (LinearLayout) findViewById(R.id.js);
+		///\\\jsLayout = (LinearLayout) findViewById(R.id.js);
 
+		canvasLayout=findViewById(R.id.canvas);
 
-		js_jsSwitch=findViewById(R.id.js_jsToggle);
-
-		jsSwitch=findViewById(R.id.jsToggle);
-
-		mouseLayout.addView(new MyMouseView(getBaseContext()));
-		//keyboardLayout.addView(new MyKeyboardView(getBaseContext(), MainActivity.this));
-
-		jsLayout.addView(new MyJSView(getBaseContext()));
-
-		jsSwitch.setOnClickListener(new View.OnClickListener() {
+		keyboardLayout.setVisibility(View.INVISIBLE);
+		canvasLayout.setVisibility(View.VISIBLE);
+		canvasLayout.addView(new MyCanvasView(getBaseContext()));
+		toggleButton=findViewById(R.id.toggleButton);
+		toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onClick(View v) {
-				mouseLayout.setVisibility(View.INVISIBLE);
-				//keyboardLayout.setVisibility(View.INVISIBLE);
-				jsLayout.setVisibility(View.VISIBLE);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (!isChecked) {
+					keyboardLayout.setVisibility(View.INVISIBLE);
+					canvasLayout.setVisibility(View.VISIBLE);
+				}
+				else {
+					keyboardLayout.setVisibility(View.VISIBLE);
+					canvasLayout.setVisibility(View.INVISIBLE);
+				}
+				/*InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(keyboardLayout.getWindowToken(), 0);*/
 			}
 		});
 
-		js_jsSwitch.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mouseLayout.setVisibility(View.VISIBLE);
-				//keyboardLayout.setVisibility(View.INVISIBLE);
-				jsLayout.setVisibility(View.INVISIBLE);
-			}
-		});
+
 
 		ScrollView scrollView = (ScrollView) findViewById(R.id.key_drag_scrollView);
 		mCoolDragAndDropGridView = (CoolDragAndDropGridView) findViewById(R.id.key_drag_DragAndDropGridView);
@@ -478,15 +710,23 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 			//Log.d("prefTest",setting_host+" "+setting_user+" "+setting_pass+" "+setting_port);
 
-			setting_sensitivity = Float.valueOf(prefs.getString("sensitivity_list", "1.0f"));
-			setting_delay = Integer.valueOf(prefs.getString("delay_list", "350"));
-			setting_mdelay = Integer.valueOf(prefs.getString("mdelay_list", "0"));
+			setting_pointing_device = Integer.valueOf(prefs.getString("pointing_device","1"));
+			setting_gyro_function = Integer.valueOf(prefs.getString("gyro_function","1"));
 
+			setting_mouse_sensitivity = Float.valueOf(prefs.getString("sensitivity_mouse_list", "1.0f"));
+			setting_mouse_delay = Integer.valueOf(prefs.getString("delay_mouse_list", "350"));
+			setting_mouse_mdelay = Integer.valueOf(prefs.getString("mdelay_mouse_list", "0"));
+
+			setting_hscroll_sensitivity = Float.valueOf(prefs.getString("sensitivity_mouse_list", "1.0f"));
+			setting_vscroll_sensitivity = Float.valueOf(prefs.getString("sensitivity_mouse_list", "1.0f"));
 
 			setting_gyro_z_sensitivity = Float.valueOf(prefs.getString("gyro_z_sensitivity_list", "1.5f"));
 			setting_gyro_y_sensitivity = Float.valueOf(prefs.getString("gyro_y_sensitivity_list", "1.5f"));
+			setting_gyro_x_sensitivity = Float.valueOf(prefs.getString("gyro_x_sensitivity_list", "1.5f"));
 			setting_gyro_z_threshold = Float.valueOf(prefs.getString("gyro_z_threshold_list", "1.5f"));
 			setting_gyro_y_threshold = Float.valueOf(prefs.getString("gyro_y_threshold_list", "1.5f"));
+			setting_gyro_x_threshold = Float.valueOf(prefs.getString("gyro_x_threshold_list", "1.5f"));
+
 
 			setting_js_sensitivity = Float.valueOf(prefs.getString("js_sensitivity_list", "1.0f"));
 			setting_js_size = Float.valueOf(prefs.getString("js_size_list", "0.5f"));
@@ -870,7 +1110,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 			mCoolDragAndDropGridView.startDragAndDrop();
 			EditKeyboardButtonsLayout.setVisibility(View.VISIBLE);
 			ETLayout.setVisibility(View.GONE);
-			fab.setVisibility(View.GONE);
+			//fab.setVisibility(View.GONE);
 		}
 		return false;
 	}
@@ -902,7 +1142,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 		potentialDeletePosition = to;
 		startPosition = from;
 		EditKeyboardButtonsLayout.setVisibility(View.GONE);
-		fab.setVisibility(View.VISIBLE);
+		//fab.setVisibility(View.VISIBLE);
 		ETLayout.setVisibility(View.VISIBLE);
 	}
 
@@ -1259,6 +1499,11 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	}
 
 
+	static void setRecentCmdTextViewText(String s) {
+		recentCmdTextView.setText(s);
+	}
+
+
 	@Override
 	public void performCallback() {
 		Log.d("tagCallback","doCallback");
@@ -1271,38 +1516,46 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	}
 
 	@Override
-	public void onSensorChanged(SensorEvent sensorEvent) {
+	public void onSensorChanged(SensorEvent sensorEvent) {///TODO
 		if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE)
 		{
-			float gyroscopeX=sensorEvent.values[1];
-			float gyroscopeY=sensorEvent.values[0];
+			float gyroscopeX=sensorEvent.values[0];
+			float gyroscopeY=sensorEvent.values[1];
 			float gyroscopeZ=sensorEvent.values[2];
 
+			gyroscopeX*=setting_gyro_x_sensitivity;
 			gyroscopeY*=setting_gyro_y_sensitivity;
 			gyroscopeZ*=setting_gyro_z_sensitivity;
+			
+			
+			gyroscopeX += regyroscopeX;
+			gyroscopeY += regyroscopeY;
+			gyroscopeZ += regyroscopeZ;
+			regyroscopeX = gyroscopeX - Math.round(gyroscopeX);
+			regyroscopeY = gyroscopeY - Math.round(gyroscopeY);
+			regyroscopeZ = gyroscopeZ - Math.round(gyroscopeZ);
+			gyroscopeX -= regyroscopeX;
+			gyroscopeY -= regyroscopeY;
+			gyroscopeZ -= regyroscopeZ;
 
 			String cmd;
 
 			ToggleButton mouseSwitch=findViewById(R.id.gyroToggle);
 			if (mouseSwitch.isChecked()) {
-				if (Math.abs(gyroscopeZ) >= setting_gyro_z_threshold || Math.abs(gyroscopeY) >= setting_gyro_y_threshold) {
-					if (gyroscopeZ < 0 || gyroscopeY < 0) {
-						cmd = "xdotool mousemove_relative -- " + (gyroscopeZ) * -15 + " " + (gyroscopeY) * -15;
+				if (Math.abs(gyroscopeZ) >= setting_gyro_z_threshold || Math.abs(gyroscopeX) >= setting_gyro_x_threshold) {
+					/*if (gyroscopeZ < 0 || gyroscopeX < 0) {
+						cmd = "xdotool mousemove_relative -- " + (gyroscopeZ) * -15 + " " + (gyroscopeX) * -15;
 					} else {
 
-						cmd = "xdotool mousemove_relative " + (gyroscopeZ) * -15 + " " + (gyroscopeY) * -15;
-					}
+						cmd = "xdotool mousemove_relative " + (gyroscopeZ) * -15 + " " + (gyroscopeX) * -15;
+					}*/
+					cmd = "xdotool mousemove_relative -- " + (gyroscopeZ) * -15 + " " + (gyroscopeX) * -15;
 					conn.executeShellCommand(cmd);
 				}
-				/*if (gyroscopeZ >= 3) {
-					cmd = "xdotool click 4";
-					conn.executeShellCommand(cmd);
-				} else if (gyroscopeZ <= -3) {
-					cmd = "xdotool click 5";
-					conn.executeShellCommand(cmd);
-				}*/
 			}
 		}
+		
+		
 	}
 
 	@Override
