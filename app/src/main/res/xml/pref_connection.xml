@@ -46,36 +46,7 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_xdotool_initial" />
-    <ListPreference
-        android:defaultValue="1.0f"
-        android:entries="@array/pref_sensitivity_list_titles"
-        android:entryValues="@array/pref_sensitivity_list_values"
-        android:key="sensitivity_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_sensitivity" />
-    <ListPreference
-        android:defaultValue="350"
-        android:entries="@array/pref_delay_list_titles"
-        android:entryValues="@array/pref_delay_list_values"
-        android:key="delay_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_delay" />
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_mdelay_list_titles"
-        android:entryValues="@array/pref_mdelay_list_values"
-        android:key="mdelay_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_mdelay" />
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="mouse_invert_scroll"
-        android:summary=""
-        android:title="Invert mouse scroll" />
 
     <!-- <CheckBoxPreference
         android:defaultValue="false"
