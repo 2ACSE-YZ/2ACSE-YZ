@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableLayout"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:stretchColumns="0,1,2,3">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ToggleButton
+            android:id="@+id/toggleButton"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:textOff="kb"
+            android:textOn="pt" />
+
+        <Button
+            android:id="@+id/button_stab"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="shift_tab"
+            android:background="@drawable/card" />
+
+        <Button
+            android:id="@+id/button_tab"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="tab"
+            android:background="@drawable/card" />
+
+        <Button
+            android:id="@+id/button_menu"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="menu"
+            android:background="@drawable/card" />
+
+    </TableRow>
+</TableLayout>
