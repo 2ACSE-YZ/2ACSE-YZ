@@ -13,10 +13,8 @@ Features
 - Tested on Ubuntu Linux, not windows, not mac
 - Minimal design
 - Free with no ads
-- Gyroscope air mouse (Z and Y axis for cursor movement)
+- Gyroscope air mouse (Z and X axis for cursor movement)
 
 Required programs on Linux host machine
 - openssh-server
 - xdotool
-
-Like this project? Donate to me via BitCoin using this address: 17DaqbcEEG3Hn5jBv3sRjPTUUCW1eBp1Wg
