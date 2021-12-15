@@ -4,29 +4,124 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
-	
+
     <ScrollView
         android:id="@+id/key_drag_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="55dp"
-         >
+        android:layout_marginBottom="90dp">
 
         <com.stripe1.xmouse.CoolDragAndDropGridView
             android:id="@+id/key_drag_DragAndDropGridView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             dragAndDrop:itemMargin="1dp"
-            dragAndDrop:numColumns="@integer/col_count" >
-        </com.stripe1.xmouse.CoolDragAndDropGridView>
+            dragAndDrop:numColumns="@integer/col_count"></com.stripe1.xmouse.CoolDragAndDropGridView>
     </ScrollView>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ffffff"
-        android:layout_above="@+id/keyboard_send_layout">
 
-    </View>
+
+    <TableLayout
+        android:id="@+id/keyboard_send_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eee"
+        android:stretchColumns="0,1,2,3,4,5" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="?android:attr/buttonBarStyle" >
+
+            <Button
+                android:id="@+id/modifier_alt"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="a"
+                android:background="@drawable/card"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/modifier_ctrl"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="c"
+                android:background="@drawable/card"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/modifier_shift"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="s"
+                android:background="@drawable/card"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/modifier_super"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="g"
+                android:background="@drawable/card"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/modifier_meta"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="m"
+                android:background="@drawable/card"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/send_modified_key"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text=">"
+                android:background="@drawable/card"
+                style="?android:attr/buttonBarButtonStyle" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <EditText
+                android:id="@+id/keyboard_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:layout_weight="100"
+                android:background="@android:color/transparent"
+                android:gravity="bottom"
+                android:hint="..."
+                android:inputType="text"
+                android:padding="4dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="10"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/keyboard_send"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/ic_action_content_send"
+                    android:gravity="bottom"
+                    android:onClick="xMouseKeyboardSend" />
+            </LinearLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+
+<!--
     <LinearLayout
         android:id="@+id/keyboard_send_layout"
         android:layout_alignParentBottom="true"
@@ -44,28 +139,31 @@
             android:gravity="bottom"
             android:background="@android:color/transparent"
             android:hint="..." />
+
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:gravity="center_vertical">
+
             <Button
                 android:id="@+id/keyboard_send"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_action_content_send"
                 android:layout_gravity="bottom"
+                android:background="@drawable/ic_action_content_send"
                 android:gravity="bottom"
-                android:onClick="xMouseKeyboardSend"
-                />
+                android:onClick="xMouseKeyboardSend" />
         </LinearLayout>
+
         <View
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_weight="1"></View>
 
     </LinearLayout>
+-->
     <RelativeLayout
         android:id="@+id/editKeyboardButtonsLayout"
         android:layout_width="match_parent"
@@ -80,14 +178,8 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:src="@android:drawable/ic_delete"
-            ></ImageView>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="55dp"
-            android:background="#fff"
-            android:layout_centerInParent="true">
+            android:layout_alignParentStart="true"></ImageView>
 
-        </View>
         <ImageView
             android:id="@+id/editButton"
             android:layout_alignParentRight="true"
@@ -95,7 +187,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:src="@android:drawable/ic_menu_edit"
-            ></ImageView>
+            android:layout_alignParentEnd="true"></ImageView>
 
     </RelativeLayout>
 </RelativeLayout>

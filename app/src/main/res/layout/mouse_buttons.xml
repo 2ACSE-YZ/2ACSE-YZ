@@ -3,19 +3,18 @@
     android:id="@+id/tableLayout"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:stretchColumns="0,1,2,3">
+    android:stretchColumns="0,1,2,3,4">
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ToggleButton
-            android:id="@+id/gyroToggle"
+        <Button
+            android:id="@+id/button_esc"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:background="@drawable/card"
-            android:textOff="OFF"
-            android:textOn="ON" />
+            android:text="esc"
+            android:background="@drawable/card" />
 
         <Button
             android:id="@+id/firstMouseButton"
@@ -39,39 +38,60 @@
             android:text="3"
             android:background="@drawable/card" />
 
+        <ToggleButton
+            android:id="@+id/gyroToggle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:textOff="OFF"
+            android:textOn="ON" />
+
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        style="?android:attr/buttonBarStyle" >
 
         <Button
             android:id="@+id/fourthMouseButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:text="4"
-            android:background="@drawable/card" />
+            android:background="@drawable/card"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/fifthMouseButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:text="5"
-            android:background="@drawable/card" />
+            android:background="@drawable/card"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/sixthMouseButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:text="6"
-            android:background="@drawable/card" />
+            android:background="@drawable/card"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/seventhMouseButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:text="7"
-            android:background="@drawable/card" />
+            android:background="@drawable/card"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/button_bs"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="bs"
+            android:background="@drawable/card"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <!--
             <Button
