@@ -10,41 +10,46 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/button_esc"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:text="esc"
-            android:background="@drawable/card" />
-
-        <Button
-            android:id="@+id/firstMouseButton"
+            android:id="@+id/button_top00"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/card"
-            android:text="1" />
+            android:text="@string/escape"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top01"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_1"
+            android:textSize="34sp" />
 
 
         <Button
-            android:id="@+id/secondMouseButton"
+            android:id="@+id/button_top02"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="2"
-            android:background="@drawable/card" />
+            android:background="@drawable/card"
+            android:text="@string/_2"
+            android:textSize="34sp" />
 
         <Button
-            android:id="@+id/thirdMouseButton"
+            android:id="@+id/button_top03"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="3"
-            android:background="@drawable/card" />
+            android:background="@drawable/card"
+            android:text="@string/_3"
+            android:textSize="34sp" />
 
         <ToggleButton
-            android:id="@+id/gyroToggle"
+            android:id="@+id/gyroToggleButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/card"
-            android:textOff="OFF"
-            android:textOn="ON" />
+            android:textOff="@string/gyro_off"
+            android:textOn="@string/gyro_on"
+            android:textSize="34sp" />
 
     </TableRow>
 
@@ -54,44 +59,49 @@
         style="?android:attr/buttonBarStyle" >
 
         <Button
-            android:id="@+id/fourthMouseButton"
+            android:id="@+id/button_top10"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="4"
             android:background="@drawable/card"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:text="@string/_4"
+            android:textSize="34sp" />
 
         <Button
-            android:id="@+id/fifthMouseButton"
+            android:id="@+id/button_top11"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="5"
             android:background="@drawable/card"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:text="@string/_5"
+            android:textSize="34sp" />
 
         <Button
-            android:id="@+id/sixthMouseButton"
+            android:id="@+id/button_top12"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="6"
             android:background="@drawable/card"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:text="@string/_6"
+            android:textSize="34sp" />
 
         <Button
-            android:id="@+id/seventhMouseButton"
+            android:id="@+id/button_top13"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="7"
             android:background="@drawable/card"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:text="@string/_7"
+            android:textSize="34sp" />
 
         <Button
-            android:id="@+id/button_bs"
+            android:id="@+id/button_top14"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="bs"
             android:background="@drawable/card"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:text="@string/backspace"
+            android:textSize="34sp" />
 
         <!--
             <Button
