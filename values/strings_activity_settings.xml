@@ -1,0 +1,368 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+    
+    <string name="pref_title_autologin">Connect to SSH host on start</string>
+    <string name="pref_description_autologin">Automatically attempt to establish SSH connection on application start</string>
+    
+    <string name="pref_description_overlay">Show the log of commands sent behind screen</string>
+    <string name="pref_title_overlay">Overlay command log</string>
+
+    <string name="pref_title_pointing_device">Pointing device</string>
+    <string name="pref_title_gyro_function">Gyro function</string>
+    
+    <string name="pref_title_mouse_sensitivity">Mouse sensitivity</string>
+    <string name="pref_title_mouse_delay">Mouse drag delay</string>
+    <string name="pref_title_mouse_mdelay">Mouse multidrag delay</string>
+
+    <string name="pref_title_hscroll_sensitivity">Horizontal scroll sensitivity</string>
+    <string name="pref_title_vscroll_sensitivity">Vertical scroll sensitivity</string>
+
+    <string name="pref_title_gyro_z_sensitivity">Gyro z sensitivity</string>
+    <string name="pref_title_gyro_y_sensitivity">Gyro y sensitivity</string>
+    <string name="pref_title_gyro_x_sensitivity">Gyro x sensitivity</string>
+    <string name="pref_title_gyro_z_threshold">Gyro z threshold</string>
+    <string name="pref_title_gyro_y_threshold">Gyro y threshold</string>
+    <string name="pref_title_gyro_x_threshold">Gyro x threshold</string>
+
+
+    <string name="pref_title_js_sensitivity">Joystick sensitivity</string>
+    <string name="pref_title_js_size">Joystick size</string>
+    <string name="pref_title_js_dead_zone">Joystick dead zone</string>
+
+
+    <string name="pref_title_setting_host">Host</string>
+    <string name="pref_title_setting_user">Username</string>
+    <string name="pref_title_setting_port">Port</string>
+    <string name="pref_title_setting_pass">Password</string>
+    <string name="pref_title_setting_alias">Alias</string>
+    <string name="pref_default_setting_host">192.168.1.1</string>
+    <string name="pref_default_setting_user">username</string>
+    <string name="pref_default_setting_port">22</string>
+    <string name="pref_default_setting_pass">passwd</string>
+    
+    <string name="pref_summary_pass"></string>
+    
+    <string name="pref_description_keyboard_autoclear">Clear keyboard input on send</string>
+    <string name="pref_title_keyboard_autoclear">Auto clear keystrokes</string>
+    
+    <string name="pref_default_xdotool_initial">export DISPLAY=\':0\' &amp;&amp; unset HISTFILE</string>
+    <string name="pref_title_xdotool_initial">Initialization command</string>
+    <string name="pref_title_shell">Login Shell (empty for default)</string>
+
+
+
+
+    <string-array name="pref_hscroll_sensitivity_list_titles">
+        <item>Tiny</item>
+        <item>Lower</item>
+        <item>Low</item>
+        <item>Normal</item>
+        <item>Increased</item>
+        <item>High</item>
+        <item>Super</item>
+    </string-array>
+
+    <string-array name="pref_hscroll_sensitivity_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+
+    <string-array name="pref_vscroll_sensitivity_list_titles">
+        <item>Tiny</item>
+        <item>Lower</item>
+        <item>Low</item>
+        <item>Normal</item>
+        <item>Increased</item>
+        <item>High</item>
+        <item>Super</item>
+    </string-array>
+
+    <string-array name="pref_vscroll_sensitivity_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+
+    <string-array name="pref_pointing_device_list_titles">
+        <item>Off</item>
+        <item>Trackpad</item>
+        <item>Joystick</item>
+        <item>Graphics Tablet</item>
+    </string-array>
+
+    <string-array name="pref_pointing_device_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+
+    <string-array name="pref_gyro_function_list_titles">
+        <item>Off</item>
+        <item>Air mouse</item>
+        <item>Joystick</item>
+    </string-array>
+
+    <string-array name="pref_gyro_function_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+    <string-array name="pref_mouse_sensitivity_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_mouse_sensitivity_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+    <string-array name="pref_mouse_delay_list_titles">
+        <item>Faster, 100ms</item>
+        <item>Fast, 250ms</item>
+        <item>Normal, 350ms</item>
+        <item>Slow, 500ms</item>
+        <item>Slower, 750ms</item>
+    </string-array>
+    <string-array name="pref_mouse_delay_list_values">
+        <item>100</item>
+        <item>250</item>
+        <item>350</item>
+        <item>500</item>
+        <item>750</item>
+    </string-array>
+    <string-array name="pref_mouse_mdelay_list_titles">
+        <item>Off</item>
+        <item>Faster, 300ms</item>
+        <item>Fast, 500ms</item>
+        <item>Normal, 750ms</item>
+        <item>Slow, 1000ms</item>
+        <item>Slower, 2000ms</item>
+    </string-array>
+    <string-array name="pref_mouse_mdelay_list_values">
+        <item>0</item>
+        <item>300</item>
+        <item>500</item>
+        <item>750</item>
+        <item>1000</item>
+        <item>2000</item>
+    </string-array>
+
+
+    <string-array name="pref_gyro_z_sensitivity_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_gyro_z_sensitivity_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+
+    <string-array name="pref_gyro_y_sensitivity_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_gyro_y_sensitivity_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+
+    <string-array name="pref_gyro_x_sensitivity_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_gyro_x_sensitivity_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+
+    <string-array name="pref_gyro_z_threshold_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_gyro_z_threshold_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+
+    <string-array name="pref_gyro_y_threshold_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_gyro_y_threshold_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+    
+    <string-array name="pref_gyro_x_threshold_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+    <string-array name="pref_gyro_x_threshold_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+
+
+    <string-array name="pref_js_sensitivity_list_titles">
+        <item>Tiny, .25X</item>
+        <item>Lower, .33X</item>
+        <item>Low, .5X</item>
+        <item>Normal, 1X</item>
+        <item>Increased, 1.5X</item>
+        <item>High, 2X</item>
+        <item>Super, 3X</item>
+    </string-array>
+
+    <string-array name="pref_js_sensitivity_list_values">
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>1.0f</item>
+        <item>1.5f</item>
+        <item>2.0f</item>
+        <item>3.0f</item>
+    </string-array>
+
+
+    <string-array name="pref_js_size_list_titles">
+        <item>10&#37;</item>
+        <item>.25X</item>
+        <item>.33X</item>
+        <item>.5X</item>
+        <item>.66X</item>
+        <item>.75X</item>
+        <item>.9X</item>
+        <item>1X</item>
+    </string-array>
+
+    <string-array name="pref_js_size_list_values">
+        <item>.1f</item>
+        <item>.25f</item>
+        <item>.3333f</item>
+        <item>.5f</item>
+        <item>.66f</item>
+        <item>.75f</item>
+        <item>.9f</item>
+        <item>1.0f</item>
+    </string-array>
+
+
+    <string-array name="pref_js_dead_zone_list_titles">
+        <item>Off</item>
+        <item>Lower, .01X</item>
+        <item>Low, .05X</item>
+        <item>Normal, .075X</item>
+        <item>Increased, .1X</item>
+        <item>High, .15X</item>
+        <item>Super, .25X</item>
+    </string-array>
+
+    <string-array name="pref_js_dead_zone_list_values">
+        <item>0.0f</item>
+        <item>.01f</item>
+        <item>.05f</item>
+        <item>.075f</item>
+        <item>.1f</item>
+        <item>.15f</item>
+        <item>.25f</item>
+    </string-array>
+
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Connections</string>
+    <string name="pref_header_xdotool">Interface</string>
+
+
+
+</resources>
