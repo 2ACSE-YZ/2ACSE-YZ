@@ -6,8 +6,8 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 import android.view.MotionEvent;
 import android.view.View;
 
