@@ -1478,6 +1478,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 	public void getPreferences(){
 
+
 		try{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
