@@ -12,7 +12,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -27,8 +26,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -63,10 +62,17 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 	public static DatabaseHandler db;
 	public static MyConnectionHandler conn;
-	LinearLayout mouseLayout;
+
+	private int pointing_device=-1;
+	private int gyro_function=-1;
+
+	private int mouseButtonsLayout=0;
+
+//	boolean s=true;
+
+	LinearLayout canvasLayout;
 	LinearLayout keyboardLayout;
 
-	LinearLayout jsLayout;
 
 	public static ArrayList<ArrayList<String>> hostDBKeys;
 	public static String setting_host="";
@@ -74,16 +80,25 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	public static int setting_port=22;
 	public static String setting_pass="";
 	public static String setting_shell = "";
-	public static float setting_sensitivity=1.5f;
-	public static int setting_delay=350;
-	public static int setting_mdelay=0;
 
+	public static int setting_pointing_device=1;
+	public static int setting_gyro_function = 1;
+
+	public static float setting_mouse_sensitivity =1.5f;
+	public static int setting_mouse_delay =350;
+	public static int setting_mouse_mdelay =0;
+
+	public static float setting_hscroll_sensitivity=1.0f;
+	public static float setting_vscroll_sensitivity=1.0f;
 
 
 	public static float setting_gyro_z_sensitivity=1.5f;
 	public static float setting_gyro_y_sensitivity=1.5f;
+	public static float setting_gyro_x_sensitivity=1.5f;
 	public static float setting_gyro_z_threshold=1.5f;
 	public static float setting_gyro_y_threshold=1.5f;
+	public static float setting_gyro_x_threshold=1.5f;
+
 
 	public static float setting_js_sensitivity=1.0f;
 	public static float setting_js_size=0.5f;
@@ -116,14 +131,24 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	private int potentialDeletePosition;
 	private int startPosition;
 	//static ListView scriptList;
-	private FloatingActionButton fab;
-	public static TextView recentCmdTextView;
+	///\\\private FloatingActionButton fab;
+	private Button button_bottom1, button_bottom2, button_bottom3, button_bottom4;
+	private Button button_top00, button_top01, button_top02, button_top03, button_top10, button_top11, button_top12, button_top13, button_top14;
+	private ToggleButton gyroToggle;
+	private int Mblayer=0;
+	private boolean Mbmod=false;
+	private boolean button_top00down =false, button_top01down =false, button_top02down =false, button_top03down =false, button_top10down =false, button_top11down =false, button_top12down =false, button_top13down =false, button_top14down =false;
+	private ToggleButton canvasToggleButton;
+	private static TextView recentCmdTextView;
 
 
 	private Sensor gyroscope;
+	
+	float regyroscopeX=0;
+	float regyroscopeY=0;
+	float regyroscopeZ=0;
 
-	private Button jsSwitch;
-	private Button js_jsSwitch;
+	///\\\private Button jsSwitch;
 
 
 	//private ArrayList<ArrayList<String>> scriptItems = new ArrayList<ArrayList<String>>();
@@ -152,36 +177,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 
 	}
-	public void xMouseClickMouse(View v){
 
-		String cmd ="";
-
-		switch(v.getId()){
-			case R.id.firstMouseButton:
-			case R.id.js_firstMouseButton:
-				cmd ="xdotool click 1";
-				break;
-			case R.id.secondMouseButton:
-			case R.id.js_secondMouseButton:
-				cmd ="xdotool click 2";
-				break;
-			case R.id.thirdMouseButton:
-			case R.id.js_thirdMouseButton:
-				cmd ="xdotool click 3";
-				break;
-			case R.id.fourthMouseButton:
-			case R.id.js_fourthMouseButton:
-				cmd ="xdotool click 4";
-				break;
-			case R.id.fifthMouseButton:
-			case R.id.js_fifthMouseButton:
-				cmd ="xdotool click 5";
-				break;
-			default:
-				break;
-		}
-		conn.executeShellCommand(cmd);
-	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -209,14 +205,20 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 
 
-		fab = (FloatingActionButton) findViewById(R.id.fab);
+		/*/fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				if(keyboardLayout.getVisibility() == View.VISIBLE){
-					mouseLayout.setVisibility(View.VISIBLE);
+					if (s) {
+						mouseLayout.setVisibility(View.VISIBLE);
+						jsLayout.setVisibility(View.INVISIBLE);
+					}
+					else {
+						mouseLayout.setVisibility(View.INVISIBLE);
+						jsLayout.setVisibility(View.VISIBLE);
+					}
 					keyboardLayout.setVisibility(View.INVISIBLE);
-					jsLayout.setVisibility(View.INVISIBLE);
 					//Log.d("MainActivity", "Show Mouse");
 					fab.setImageResource(R.drawable.ic_action_hardware_keyboard);
 				}else {
@@ -236,16 +238,18 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 			}
 		});
 
-		/*fab.setOnLongClickListener(new View.OnLongClickListener() {
+		fab.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-				if(jsLayout.getVisibility() == View.INVISIBLE){
+				if(s){
+					s=false;
 					mouseLayout.setVisibility(View.INVISIBLE);
 					keyboardLayout.setVisibility(View.INVISIBLE);
 					jsLayout.setVisibility(View.VISIBLE);
 					//Log.d("MainActivity", "Show Mouse");
 					fab.setImageResource(R.drawable.ic_action_hardware_keyboard);
 				}else {
+					s=true;
 					keyboardLayout.setVisibility(View.INVISIBLE);
 					mouseLayout.setVisibility(View.VISIBLE);
 					jsLayout.setVisibility(View.INVISIBLE);
@@ -261,7 +265,103 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 				return true;
 			}
-		});*/
+		});/*/
+
+		button_bottom2 =findViewById(R.id.button_bottom2);
+
+		button_bottom2.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Tab";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		button_bottom1 =findViewById(R.id.button_bottom1);
+
+		button_bottom1.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Shift_L+Tab";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		button_bottom3 =findViewById(R.id.button_bottom3);
+
+		button_bottom3.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Menu";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_bottom3.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Multi_key";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+		button_bottom4 =findViewById(R.id.button_bottom4);
+
+		button_bottom4.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Return";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		button_top00 =findViewById(R.id.button_top00);
+
+		button_top14 =findViewById(R.id.button_top14);
+
+		button_top01 =findViewById(R.id.button_top01);
+		button_top02 =findViewById(R.id.button_top02);
+		button_top03 =findViewById(R.id.button_top03);
+		button_top10 =findViewById(R.id.button_top10);
+		button_top11 =findViewById(R.id.button_top11);
+		button_top12 =findViewById(R.id.button_top12);
+		button_top13 =findViewById(R.id.button_top13);
+
+		setlayerMb();
+
+		gyroToggle =findViewById(R.id.gyroToggleButton);
+		///TODO
+
+		gyroToggle.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				Mblayer++;
+				Mblayer%=3;
+				switch (Mblayer) {
+					case 0:
+						setlayerMb();
+						break;
+					case 1:
+						if (Mbmod) {
+							setlayerArr();
+						}
+						else {
+							setlayerArrS();
+						}
+						break;
+					case 2:
+						setlayerMedia();
+						break;
+				}
+				return true;
+			}
+		});
+			
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -269,38 +369,34 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 		drawer.setDrawerListener(toggle);
 		toggle.syncState();
 
-		mouseLayout = (LinearLayout) findViewById(R.id.mouse);
-		keyboardLayout = (LinearLayout) findViewById(R.id.keyboard);
+		///\\\mouseLayout = (LinearLayout) findViewById(R.id.mouse);
+		keyboardLayout = findViewById(R.id.keyboard);
 
-		jsLayout = (LinearLayout) findViewById(R.id.js);
+		///\\\jsLayout = (LinearLayout) findViewById(R.id.js);
 
+		canvasLayout=findViewById(R.id.canvas);
 
-		js_jsSwitch=findViewById(R.id.js_jsToggle);
-
-		jsSwitch=findViewById(R.id.jsToggle);
-
-		mouseLayout.addView(new MyMouseView(getBaseContext()));
-		//keyboardLayout.addView(new MyKeyboardView(getBaseContext(), MainActivity.this));
-
-		jsLayout.addView(new MyJSView(getBaseContext()));
-
-		jsSwitch.setOnClickListener(new View.OnClickListener() {
+		keyboardLayout.setVisibility(View.INVISIBLE);
+		canvasLayout.setVisibility(View.VISIBLE);
+		canvasLayout.addView(new MyCanvasView(getBaseContext()));
+		canvasToggleButton =findViewById(R.id.canvasToggleButton);
+		canvasToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onClick(View v) {
-				mouseLayout.setVisibility(View.INVISIBLE);
-				//keyboardLayout.setVisibility(View.INVISIBLE);
-				jsLayout.setVisibility(View.VISIBLE);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (!isChecked) {
+					keyboardLayout.setVisibility(View.INVISIBLE);
+					canvasLayout.setVisibility(View.VISIBLE);
+				}
+				else {
+					keyboardLayout.setVisibility(View.VISIBLE);
+					canvasLayout.setVisibility(View.INVISIBLE);
+				}
+				/*InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(keyboardLayout.getWindowToken(), 0);*/
 			}
 		});
 
-		js_jsSwitch.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mouseLayout.setVisibility(View.VISIBLE);
-				//keyboardLayout.setVisibility(View.INVISIBLE);
-				jsLayout.setVisibility(View.INVISIBLE);
-			}
-		});
+
 
 		ScrollView scrollView = (ScrollView) findViewById(R.id.key_drag_scrollView);
 		mCoolDragAndDropGridView = (CoolDragAndDropGridView) findViewById(R.id.key_drag_DragAndDropGridView);
@@ -353,6 +449,938 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 		conn = new MyConnectionHandler(MainActivity.this, MainActivity.this);
 	}
+
+
+	private void unsetlayer() {
+		button_top01down =false;
+		button_top02down =false;
+		button_top03down =false;
+		button_top10down =false;
+		button_top11down =false;
+		button_top12down =false;
+		button_top13down =false;
+
+		button_top00.setText("");
+		button_top00.setOnClickListener(null);
+		button_top00.setOnLongClickListener(null);
+		button_top00.setOnTouchListener(null);
+
+		button_top01.setText("");
+		button_top01.setOnClickListener(null);
+		button_top01.setOnLongClickListener(null);
+		button_top01.setOnTouchListener(null);
+
+		button_top02.setText("");
+		button_top02.setOnClickListener(null);
+		button_top02.setOnLongClickListener(null);
+		button_top02.setOnTouchListener(null);
+
+		button_top03.setText("");
+		button_top03.setOnClickListener(null);
+		button_top03.setOnLongClickListener(null);
+		button_top03.setOnTouchListener(null);
+
+		button_top10.setText("");
+		button_top10.setOnClickListener(null);
+		button_top10.setOnLongClickListener(null);
+		button_top10.setOnTouchListener(null);
+
+		button_top11.setText("");
+		button_top11.setOnClickListener(null);
+		button_top11.setOnLongClickListener(null);
+		button_top11.setOnTouchListener(null);
+
+		button_top12.setText("");
+		button_top12.setOnClickListener(null);
+		button_top12.setOnLongClickListener(null);
+		button_top12.setOnTouchListener(null);
+
+		button_top13.setText("");
+		button_top13.setOnClickListener(null);
+		button_top13.setOnLongClickListener(null);
+		button_top13.setOnTouchListener(null);
+
+		button_top14.setText("");
+		button_top14.setOnClickListener(null);
+		button_top14.setOnLongClickListener(null);
+		button_top14.setOnTouchListener(null);
+
+
+	}
+
+
+
+	private void setlayerMb() {
+
+		unsetlayer();
+
+		button_top00.setText(getString(R.string.escape));
+
+		button_top00.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Escape";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		button_top01.setText(getString(R.string._1));
+
+
+		button_top01.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					String cmd="";
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN:
+							if (!button_top01down) {
+								cmd="xdotool mousedown 1";
+							}
+							button_top01down =true;
+							break;
+						case MotionEvent.ACTION_UP:
+						case MotionEvent.ACTION_CANCEL:
+							if (button_top01down) {
+								cmd="xdotool mouseup 1";
+							}
+							button_top01down =false;
+					}
+					if (cmd!="") {
+						conn.executeShellCommand(cmd);
+						return true;
+					}
+					return false;
+				}
+		});
+
+
+		button_top02.setText(getString(R.string._2));
+
+		button_top02.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top02down) {
+							cmd="xdotool mousedown 2";
+						}
+						button_top02down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top02down) {
+							cmd="xdotool mouseup 2";
+						}
+						button_top02down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top03.setText(getString(R.string._3));
+
+		button_top03.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top03down) {
+							cmd="xdotool mousedown 3";
+						}
+						button_top03down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top03down) {
+							cmd="xdotool mouseup 3";
+						}
+						button_top03down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top10.setText(getString(R.string._4));
+
+		button_top10.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top10down) {
+							cmd="xdotool mousedown 4";
+						}
+						button_top10down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top10down) {
+							cmd="xdotool mouseup 4";
+						}
+						button_top10down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+
+		button_top11.setText(getString(R.string._5));
+
+
+		button_top11.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top11down) {
+							cmd="xdotool mousedown 5";
+						}
+						button_top11down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top11down) {
+							cmd="xdotool mouseup 5";
+						}
+						button_top11down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+
+		button_top12.setText(getString(R.string._6));
+
+
+		button_top12.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top12down) {
+							cmd="xdotool mousedown 6";
+						}
+						button_top12down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top12down) {
+							cmd="xdotool mouseup 6";
+						}
+						button_top12down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+
+		button_top13.setText(getString(R.string._7));
+
+		button_top13.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top13down) {
+							cmd="xdotool mousedown 7";
+						}
+						button_top13down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top13down) {
+							cmd="xdotool mouseup 7";
+						}
+						button_top13down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+		button_top14.setText(getString(R.string.backspace));
+
+		button_top14.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key BackSpace";
+				conn.executeShellCommand(cmd);
+			}
+			});
+
+		button_top14.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Control_L+BackSpace";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+	}
+
+	private void setlayerArr() {
+
+		unsetlayer();
+
+
+		button_top00.setText(getString(R.string.page_up));
+
+		button_top00.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Page_Up";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top00.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Control_L+Left";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+		button_top01.setText(getString(R.string.home));
+
+		button_top01.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Home";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top01.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Shift_L+Left";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+		button_top02.setText(getString(R.string.arr_up));
+
+		button_top02.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top02down) {
+							cmd="xdotool keydown Up";
+						}
+						button_top02down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top02down) {
+							cmd="xdotool keyup Up";
+						}
+						button_top02down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top03.setText(getString(R.string.end));
+
+		button_top03.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key End";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top03.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Shift_L+Right";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+		button_top10.setText(getString(R.string.page_down));
+
+		button_top10.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Page_Down";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top10.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Control_L+Right";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+		button_top11.setText(getString(R.string.arr_left));
+
+		button_top11.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top11down) {
+							cmd="xdotool keydown Left";
+						}
+						button_top11down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top11down) {
+							cmd="xdotool keyup Left";
+						}
+						button_top11down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top12.setText(getString(R.string.arr_down));
+
+		button_top12.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top12down) {
+							cmd="xdotool keydown Down";
+						}
+						button_top12down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top12down) {
+							cmd="xdotool keyup Down";
+						}
+						button_top12down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top13.setText(getString(R.string.arr_right));
+
+		button_top13.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top13down) {
+							cmd="xdotool keydown Right";
+						}
+						button_top13down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top13down) {
+							cmd="xdotool keyup Right";
+						}
+						button_top13down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top14.setText(getString(R.string.scroll_lock));
+
+		button_top14.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Scroll_Lock";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top14.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				Mbmod=!Mbmod;
+				if (Mbmod) {
+					setlayerArr();
+				}
+				else {
+					setlayerArrS();
+				}
+				return true;
+			}
+		});
+	}
+
+
+
+	private void setlayerArrS() {
+		unsetlayer();
+
+
+
+		button_top00.setText(getString(R.string.shift)+getString(R.string.arr_up)+getString(R.string.sep)+getString(R.string.alt)+getString(R.string.arr_left));
+		button_top00.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Shift_L+Up";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top00.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Alt_L+Left";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+
+		button_top01.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Control_L+Shift_L+Left";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top01.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Shift_L+Home";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+		button_top02.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top02down) {
+							cmd="xdotool keydown Up";
+						}
+						button_top02down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top02down) {
+							cmd="xdotool keyup Up";
+						}
+						button_top02down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+
+
+		button_top03.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Control_L+Shift_L+Right";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top03.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Shift_L+End";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+		button_top10.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Shift_L+Down";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top10.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Alt_L+Right";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+		button_top11.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top11down) {
+							cmd="xdotool keydown Left";
+						}
+						button_top11down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top11down) {
+							cmd="xdotool keyup Left";
+						}
+						button_top11down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top12.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top12down) {
+							cmd="xdotool keydown Down";
+						}
+						button_top12down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top12down) {
+							cmd="xdotool keyup Down";
+						}
+						button_top12down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+
+		button_top13.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top13down) {
+							cmd="xdotool keydown Right";
+						}
+						button_top13down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top13down) {
+							cmd="xdotool keyup Right";
+						}
+						button_top13down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+		button_top14.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Scroll_Lock";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top14.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				Mbmod=!Mbmod;
+				if (Mbmod) {
+					setlayerArr();
+				}
+				else {
+					setlayerArrS();
+				}
+				return true;
+			}
+		});
+	}
+
+	private void setlayerMedia() {
+		unsetlayer();
+
+		button_top00.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top00down) {
+							cmd="xdotool keydown XF86MonBrightnessUp";
+						}
+						button_top00down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top00down) {
+							cmd="xdotool keyup XF86MonBrightnessUp";
+						}
+						button_top00down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top14.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Alt_L+Tab";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		button_top14.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Control_L+Tab";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+
+		button_top01.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					String cmd="";
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN:
+							if (!button_top01down) {
+								cmd="xdotool keydown XF86AudioRaiseVolume";
+							}
+							button_top01down =true;
+							break;
+						case MotionEvent.ACTION_UP:
+						case MotionEvent.ACTION_CANCEL:
+							if (button_top01down) {
+								cmd="xdotool keyup XF86AudioRaiseVolume";
+							}
+							button_top01down =false;
+					}
+					if (cmd!="") {
+						conn.executeShellCommand(cmd);
+						return true;
+					}
+					return false;
+				}
+			});
+
+
+		button_top02.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key XF86AudioPlay";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top02.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key XF86AudioPause";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+
+		button_top03.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key XF86Search";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top03.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key XF86HomePage";
+				return true;
+			}
+		});
+
+		button_top10.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top10down) {
+							cmd="xdotool keydown XF86MonBrightnessDown";
+						}
+						button_top10down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top10down) {
+							cmd="xdotool keyup XF86MonBrightnessDown";
+						}
+						button_top10down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top11.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				String cmd="";
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						if (!button_top11down) {
+							cmd="xdotool keydown XF86AudioLowerVolume";
+						}
+						button_top11down =true;
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (button_top11down) {
+							cmd="xdotool keyup XF86AudioLowerVolume";
+						}
+						button_top11down =false;
+				}
+				if (cmd!="") {
+					conn.executeShellCommand(cmd);
+					return true;
+				}
+				return false;
+			}
+		});
+
+
+		button_top12.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key XF86AudioMute";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+
+		button_top13.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String cmd="xdotool key Alt_L+Shift_L+Tab";
+				conn.executeShellCommand(cmd);
+			}
+		});
+
+		button_top13.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				String cmd="xdotool key Control_L+Shift_L+Tab";
+				conn.executeShellCommand(cmd);
+				return true;
+			}
+		});
+	}
+
 	public void initDb(){
 
 		hostDBKeys = new ArrayList<ArrayList<String>>();
@@ -450,6 +1478,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 	public void getPreferences(){
 
+
 		try{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -478,15 +1507,23 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 			//Log.d("prefTest",setting_host+" "+setting_user+" "+setting_pass+" "+setting_port);
 
-			setting_sensitivity = Float.valueOf(prefs.getString("sensitivity_list", "1.0f"));
-			setting_delay = Integer.valueOf(prefs.getString("delay_list", "350"));
-			setting_mdelay = Integer.valueOf(prefs.getString("mdelay_list", "0"));
+			setting_pointing_device = Integer.valueOf(prefs.getString("pointing_device","1"));
+			setting_gyro_function = Integer.valueOf(prefs.getString("gyro_function","1"));
 
+			setting_mouse_sensitivity = Float.valueOf(prefs.getString("sensitivity_mouse_list", "1.0f"));
+			setting_mouse_delay = Integer.valueOf(prefs.getString("delay_mouse_list", "350"));
+			setting_mouse_mdelay = Integer.valueOf(prefs.getString("mdelay_mouse_list", "0"));
+
+			setting_hscroll_sensitivity = Float.valueOf(prefs.getString("sensitivity_mouse_list", "1.0f"));
+			setting_vscroll_sensitivity = Float.valueOf(prefs.getString("sensitivity_mouse_list", "1.0f"));
 
 			setting_gyro_z_sensitivity = Float.valueOf(prefs.getString("gyro_z_sensitivity_list", "1.5f"));
 			setting_gyro_y_sensitivity = Float.valueOf(prefs.getString("gyro_y_sensitivity_list", "1.5f"));
+			setting_gyro_x_sensitivity = Float.valueOf(prefs.getString("gyro_x_sensitivity_list", "1.5f"));
 			setting_gyro_z_threshold = Float.valueOf(prefs.getString("gyro_z_threshold_list", "1.5f"));
 			setting_gyro_y_threshold = Float.valueOf(prefs.getString("gyro_y_threshold_list", "1.5f"));
+			setting_gyro_x_threshold = Float.valueOf(prefs.getString("gyro_x_threshold_list", "1.5f"));
+
 
 			setting_js_sensitivity = Float.valueOf(prefs.getString("js_sensitivity_list", "1.0f"));
 			setting_js_size = Float.valueOf(prefs.getString("js_size_list", "0.5f"));
@@ -870,7 +1907,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 			mCoolDragAndDropGridView.startDragAndDrop();
 			EditKeyboardButtonsLayout.setVisibility(View.VISIBLE);
 			ETLayout.setVisibility(View.GONE);
-			fab.setVisibility(View.GONE);
+			//fab.setVisibility(View.GONE);
 		}
 		return false;
 	}
@@ -902,7 +1939,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 		potentialDeletePosition = to;
 		startPosition = from;
 		EditKeyboardButtonsLayout.setVisibility(View.GONE);
-		fab.setVisibility(View.VISIBLE);
+		//fab.setVisibility(View.VISIBLE);
 		ETLayout.setVisibility(View.VISIBLE);
 	}
 
@@ -1259,6 +2296,11 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	}
 
 
+	static void setRecentCmdTextViewText(String s) {
+		recentCmdTextView.setText(s);
+	}
+
+
 	@Override
 	public void performCallback() {
 		Log.d("tagCallback","doCallback");
@@ -1271,38 +2313,45 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 	}
 
 	@Override
-	public void onSensorChanged(SensorEvent sensorEvent) {
+	public void onSensorChanged(SensorEvent sensorEvent) {///TODO
 		if(sensorEvent.sensor.getType()==Sensor.TYPE_GYROSCOPE)
 		{
-			float gyroscopeX=sensorEvent.values[1];
-			float gyroscopeY=sensorEvent.values[0];
+			float gyroscopeX=sensorEvent.values[0];
+			float gyroscopeY=sensorEvent.values[1];
 			float gyroscopeZ=sensorEvent.values[2];
 
+			gyroscopeX*=setting_gyro_x_sensitivity;
 			gyroscopeY*=setting_gyro_y_sensitivity;
 			gyroscopeZ*=setting_gyro_z_sensitivity;
+			
+			
+			gyroscopeX += regyroscopeX;
+			gyroscopeY += regyroscopeY;
+			gyroscopeZ += regyroscopeZ;
+			regyroscopeX = gyroscopeX - Math.round(gyroscopeX);
+			regyroscopeY = gyroscopeY - Math.round(gyroscopeY);
+			regyroscopeZ = gyroscopeZ - Math.round(gyroscopeZ);
+			gyroscopeX -= regyroscopeX;
+			gyroscopeY -= regyroscopeY;
+			gyroscopeZ -= regyroscopeZ;
 
 			String cmd;
 
-			ToggleButton mouseSwitch=findViewById(R.id.gyroToggle);
-			if (mouseSwitch.isChecked()) {
-				if (Math.abs(gyroscopeZ) >= setting_gyro_z_threshold || Math.abs(gyroscopeY) >= setting_gyro_y_threshold) {
-					if (gyroscopeZ < 0 || gyroscopeY < 0) {
-						cmd = "xdotool mousemove_relative -- " + (gyroscopeZ) * -15 + " " + (gyroscopeY) * -15;
+			if (gyroToggle.isChecked()) {
+				if (Math.abs(gyroscopeZ) >= setting_gyro_z_threshold || Math.abs(gyroscopeX) >= setting_gyro_x_threshold) {
+					/*if (gyroscopeZ < 0 || gyroscopeX < 0) {
+						cmd = "xdotool mousemove_relative -- " + (gyroscopeZ) * -15 + " " + (gyroscopeX) * -15;
 					} else {
 
-						cmd = "xdotool mousemove_relative " + (gyroscopeZ) * -15 + " " + (gyroscopeY) * -15;
-					}
+						cmd = "xdotool mousemove_relative " + (gyroscopeZ) * -15 + " " + (gyroscopeX) * -15;
+					}*/
+					cmd = "xdotool mousemove_relative -- " + (gyroscopeZ) * -15 + " " + (gyroscopeX) * -15;
 					conn.executeShellCommand(cmd);
 				}
-				/*if (gyroscopeZ >= 3) {
-					cmd = "xdotool click 4";
-					conn.executeShellCommand(cmd);
-				} else if (gyroscopeZ <= -3) {
-					cmd = "xdotool click 5";
-					conn.executeShellCommand(cmd);
-				}*/
 			}
 		}
+		
+		
 	}
 
 	@Override

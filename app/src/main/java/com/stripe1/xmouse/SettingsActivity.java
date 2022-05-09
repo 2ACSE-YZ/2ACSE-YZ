@@ -279,6 +279,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         //listPrefKeys.setEnabled(false);
 
 
+
+        fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle("Pointing");
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_pointing);
+
+        bindPreferenceSummaryToValue(findPreference("pointing_device"));
+        bindPreferenceSummaryToValue(findPreference("gyro_function"));
+
+
+
+        fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle("Mouse");
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_mouse);
+
+        bindPreferenceSummaryToValue(findPreference("sensitivity_list"));
+        bindPreferenceSummaryToValue(findPreference("delay_list"));
+        bindPreferenceSummaryToValue(findPreference("mdelay_list"));
+
+
         fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle("Gyro");
         getPreferenceScreen().addPreference(fakeHeader);
@@ -287,9 +308,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         bindPreferenceSummaryToValue(findPreference("gyro_z_sensitivity_list"));
         bindPreferenceSummaryToValue(findPreference("gyro_y_sensitivity_list"));
+        bindPreferenceSummaryToValue(findPreference("gyro_x_sensitivity_list"));
         bindPreferenceSummaryToValue(findPreference("gyro_z_threshold_list"));
         bindPreferenceSummaryToValue(findPreference("gyro_y_threshold_list"));
-
+        bindPreferenceSummaryToValue(findPreference("gyro_x_threshold_list"));
 
         fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle("Joystick");
@@ -316,9 +338,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         //bindPreferenceSummaryToValue(findPreference("setting_pass"));
         //bindPreferenceSummaryToValue(findPreference("autologin_checkbox"));
         bindPreferenceSummaryToValue(findPreference("pref_addkeybutton"));
-        bindPreferenceSummaryToValue(findPreference("sensitivity_list"));
-        bindPreferenceSummaryToValue(findPreference("delay_list"));
-        bindPreferenceSummaryToValue(findPreference("mdelay_list"));
         bindPreferenceSummaryToValue(findPreference("setting_xdotool_initial"));
         bindPreferenceSummaryToValue(findPreference("setting_shell"));
 
@@ -419,8 +438,4 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
     }
-
-
-
-
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_pointing_device_list_titles"
+        android:entryValues="@array/pref_pointing_device_list_values"
+        android:key="pointing_device"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_pointing_device" />
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_gyro_function_list_titles"
+        android:entryValues="@array/pref_gyro_function_list_values"
+        android:key="gyro_function"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_gyro_function" />
+
+</PreferenceScreen>

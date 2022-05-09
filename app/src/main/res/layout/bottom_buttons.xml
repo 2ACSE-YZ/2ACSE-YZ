@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableLayout"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:stretchColumns="0,1,2,3,4">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ToggleButton
+            android:id="@+id/canvasToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:textOff="@string/keyboard"
+            android:textOn="@string/pt"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_bottom1"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/shift_tab"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_bottom2"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/tab"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_bottom3"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/menu"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_bottom4"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/enter"
+            android:textSize="34sp" />
+
+    </TableRow>
+</TableLayout>

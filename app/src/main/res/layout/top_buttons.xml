@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableLayout"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:stretchColumns="0,1,2,3,4">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/button_top00"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/escape"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top01"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_1"
+            android:textSize="34sp" />
+
+
+        <Button
+            android:id="@+id/button_top02"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_2"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top03"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_3"
+            android:textSize="34sp" />
+
+        <ToggleButton
+            android:id="@+id/gyroToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:textOff="@string/gyro_off"
+            android:textOn="@string/gyro_on"
+            android:textSize="34sp" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="?android:attr/buttonBarStyle" >
+
+        <Button
+            android:id="@+id/button_top10"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_4"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top11"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_5"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top12"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_6"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top13"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/_7"
+            android:textSize="34sp" />
+
+        <Button
+            android:id="@+id/button_top14"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/card"
+            android:text="@string/backspace"
+            android:textSize="34sp" />
+
+        <!--
+            <Button
+                android:id="@+id/jsToggle"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fourthMouseButton"
+                app:layout_constraintTop_toTopOf="parent" />-->
+    </TableRow>
+</TableLayout>

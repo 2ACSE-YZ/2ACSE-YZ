@@ -272,8 +272,7 @@ public class MyConnectionHandler {
     }
 
     public boolean executeShellCommand(String cmd){
-
-        MainActivity.recentCmdTextView.setText(cmd);
+        MainActivity.setRecentCmdTextViewText(cmd);
         if(session==null){
             return false;
         }
@@ -285,7 +284,7 @@ public class MyConnectionHandler {
                 pin.flush();
                 return true;
             } catch (IOException e) {
-                MainActivity.recentCmdTextView.setText(e.getMessage()+"\t"+cmd);
+                MainActivity.setRecentCmdTextViewText(e.getMessage()+"\t"+cmd);
 
                 e.printStackTrace();
             }
