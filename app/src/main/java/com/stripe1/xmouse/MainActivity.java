@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MyInterface, Navi
 
 	MenuItem conDiscButton = null;
 	MenuItem KeyLockButton = null;
-	MenuItem InvScrollButton= null;
+	MenuItem InvScrollButton = null;
 	FragmentManager fm = getSupportFragmentManager();
 
 	public static DatabaseHandler db;
